@@ -10,13 +10,15 @@ import React, {
 } from "react";
 import { Piece, Square } from "react-chessboard/dist/chessboard/types";
 
-import { CustomSquares } from "@/lib/types";
+import { CustomSquares, PlayerMove } from "@/lib/types";
 import { Chessboard } from "@/components/chessboard";
 
 import { Button } from "@/components/ui";
-import { GameContext } from "@/context";
 import { gameReducer, initialState } from "@/reducers/game";
 import { CHOOSE_COLOR, RESTART, UNDO, UPDATE_POSITION } from "@/reducers/types";
+import { GameDetails } from "@/components/game-details";
+import { useGame } from "@/lib/hooks";
+import { getMoveOptions, playerMove } from "@/helpers";
 
 type Move = {
   from: string;
@@ -25,11 +27,12 @@ type Move = {
 };
 
 const AnalysisBoard = () => {
-  const { setValue } = useContext(GameContext);
-  const [value, dispatch] = useReducer(gameReducer, initialState);
-  const { game, engine, engineLevel, position, result, playerColor } = value;
+  const {
+    value: { game, engine, engineLevel, position, result, player, opponent },
+    dispatch,
+  } = useGame();
 
-  const [info, setInfo] = useState("");
+  const [moveFrom, setMoveFrom] = useState<Square | null>(null);
   const [customSquare, setCustomSquare] = useState<Partial<CustomSquares>>({});
 
   const [positionEvaluation, setPositionEvaluation] = useState(0);
@@ -53,6 +56,14 @@ const AnalysisBoard = () => {
     });
   }, [engine, engineLevel, game, position]);
 
+  const makeAMove = useCallback(
+    (move: PlayerMove) => {
+      return playerMove({ game, move, dispatch, setCustomSquare });
+    },
+
+    [game, dispatch]
+  );
+
   const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
     const move = game.move({
       from: sourceSquare,
@@ -73,42 +84,38 @@ const AnalysisBoard = () => {
     return true;
   };
 
-  const getMoveList = () => {
-    const history = game.history({ verbose: true });
-    const movePairs = history
-      .slice(history.length / 2)
-      .map((_, i) => history.slice((i *= 2), i + 2));
-
-    return movePairs.map((moves, i) => {
-      return (
-        <div className="flex items-center gap-1" key={i}>
-          <div className="">{i + 1}.</div>
-          <div className="">{moves[0].san}</div>
-          {moves[1] && <div className="">{moves[1].san}</div>}
-        </div>
-      );
-    });
+  const onPieceDragBegin = (piece: string, sourceSquare: Square) => {
+    getMoveOptions({ game, square: sourceSquare, setCustomSquare });
   };
 
-  const undo = () => {
-    dispatch({
-      type: UNDO,
-    });
+  const onPieceDragEnd = () => {
+    setCustomSquare({ options: {} });
   };
 
-  const restart = () => {
-    setInfo("");
-    dispatch({
-      type: RESTART,
-    });
-  };
+  const onSquareClick = (square: Square) => {
+    const resetMove = (square: Square) => {
+      setMoveFrom(square);
+      getMoveOptions({ game, square, setCustomSquare });
+    };
 
-  useEffect(() => {
-    dispatch({
-      type: CHOOSE_COLOR,
-      payload: "b",
-    });
-  }, []);
+    if (moveFrom === null) {
+      resetMove(square);
+      return;
+    }
+
+    const moveData: PlayerMove = {
+      from: moveFrom,
+      to: square,
+      promotion: "q",
+    };
+
+    const move = makeAMove(moveData);
+    if (!move) {
+      resetMove(square);
+    } else {
+      setMoveFrom(null);
+    }
+  };
 
   useEffect(() => {
     if (!game.isGameOver() || game.isDraw()) {
@@ -133,9 +140,20 @@ const AnalysisBoard = () => {
         </h5>
         <Chessboard
           size="lg"
-          info={info}
+          info={result}
+          player={player}
+          opponent={opponent}
           position={position}
           onPieceDrop={onDrop}
+          onSquareClick={onSquareClick}
+          onPieceDragEnd={onPieceDragEnd}
+          arePremovesAllowed={true}
+          onPieceDragBegin={onPieceDragBegin}
+          customSquareStyles={{
+            ...customSquare.check,
+            ...customSquare.options,
+            ...customSquare.lastMove,
+          }}
           customArrows={
             bestMove && [
               [
@@ -145,18 +163,12 @@ const AnalysisBoard = () => {
               ],
             ]
           }
-          customSquareStyles={{ ...customSquare.check }}
-          boardOrientation={playerColor === "w" ? "white" : "black"}
+          boardOrientation={player.color === "w" ? "white" : "black"}
         />
       </div>
-      <div className="w-full lg:w-1/2 inline-flex flex-col justify-center items-center gap-3">
-        <div className="w-full space-x-3">
-          <Button onClick={undo}>Undo</Button>
-          <Button onClick={restart}>Restart</Button>
-        </div>
-        <div className="w-full lg:w-4/5 h-80 border-2 border-black rounded-lg overflow-y-auto">
-          <div className="w-full flex flex-wrap">{getMoveList()}</div>
-        </div>
+
+      <div className="w-full lg:w-1/2 h-full inline-flex justify-center items-center">
+        <GameDetails />
       </div>
     </div>
   );

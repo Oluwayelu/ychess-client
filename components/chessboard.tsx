@@ -41,6 +41,7 @@ export interface ChessboardProps
   className?: string;
   player?: Player;
   opponent?: Player;
+  customArrows?: any;
 }
 
 const Chessboard = ({
