@@ -2,16 +2,12 @@ import { useEffect } from "react";
 
 import { useGame } from "@/lib/hooks";
 import { pad, formatTime } from "@/lib/utils";
-import {
-  UPDATE_OTHER_PLAYER_TIME,
-  UPDATE_PLAYER_TIME,
-  UPDATE_TIMER,
-} from "@/reducers/types";
+import { UPDATE_OTHER_PLAYER_TIME, UPDATE_PLAYER_TIME } from "@/reducers/types";
 
-import { Player } from "@/lib/types";
+import { Player, Side } from "@/lib/types";
 
 interface Props {
-  side: "player" | "opponent";
+  side: Side;
   player: Player;
 }
 

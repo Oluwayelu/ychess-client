@@ -7,7 +7,7 @@ import {
   UPDATE_RESULT,
 } from "@/reducers/types";
 
-import { Actions, CustomSquares, Player, PlayerMove } from "@/lib/types";
+import { Actions, CustomSquares, Player, PlayerMove, Side } from "@/lib/types";
 import { Dispatch, SetStateAction } from "react";
 
 export const bestMove = ({
@@ -72,8 +72,10 @@ export const playerMove = ({
   move,
   dispatch,
   setCustomSquare,
+  side = "player",
 }: {
   game: Chess;
+  side?: Side;
   move: PlayerMove;
   dispatch: Dispatch<Actions>;
   setCustomSquare: Dispatch<SetStateAction<Partial<CustomSquares>>>;
@@ -84,9 +86,15 @@ export const playerMove = ({
       type: UPDATE_POSITION,
     });
 
-    dispatch({
-      type: ADD_INCREMENT_TO_PLAYER_TIME,
-    });
+    if (side === "player") {
+      dispatch({
+        type: ADD_INCREMENT_TO_PLAYER_TIME,
+      });
+    } else {
+      dispatch({
+        type: ADD_INCREMENT_TO_OPPONENT_TIME,
+      });
+    }
 
     let kingSquare = undefined;
     if (game.inCheck()) {

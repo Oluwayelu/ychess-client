@@ -6,6 +6,7 @@ import {
   ADD_INCREMENT_TO_OPPONENT_TIME,
   ADD_INCREMENT_TO_PLAYER_TIME,
   CHOOSE_COLOR,
+  CHOOSE_TIME,
   ENGING_LEVEL,
   PLAY_COMPUTER,
   RESTART,
@@ -149,6 +150,19 @@ export const gameReducer = (
 
     case UPDATE_RESULT:
       return { ...state, result: payload };
+
+    case CHOOSE_TIME:
+      return {
+        ...state,
+        opponent: {
+          ...state.opponent,
+          timeControl: payload,
+        },
+        player: {
+          ...state.player,
+          timeControl: payload,
+        },
+      };
 
     case CHOOSE_COLOR:
       const color: PlayersColor =

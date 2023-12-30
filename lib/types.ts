@@ -43,6 +43,8 @@ export type GameType = {
 
 export type Status = "PLAYING" | "GAMEOVER" | "RESIGN" | "DRAW";
 
+export type Side = "player" | "opponent";
+
 export interface Player {
   name: string;
   color: Color;

@@ -1,10 +1,11 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Chessboard as RChessboard } from "react-chessboard";
 
-import { cn } from "@/lib/utils";
-import type { ChessboardProps as RChessboardProps } from "react-chessboard/dist/chessboard/types";
 import { Timer } from "./timer";
+import { cn } from "@/lib/utils";
 import { Player } from "@/lib/types";
+
+import type { ChessboardProps as RChessboardProps } from "react-chessboard/dist/chessboard/types";
 
 const chessboardVariants = cva(
   "relative inline-flex flex-col items-center justify-center",
@@ -55,15 +56,6 @@ const Chessboard = ({
 }: ChessboardProps) => {
   return (
     <div className={cn(chessboardVariants({ size, className }))}>
-      {(info || disabled) && (
-        <div className="w-full h-full absolute inset-0 flex items-center justify-center z-30">
-          {info && (
-            <div className="w-full py-5 text-center bg-background">
-              <p className="text-lg lg:text-xl font-medium">{info}</p>
-            </div>
-          )}
-        </div>
-      )}
       {opponent && (
         <div className="w-full flex items-center justify-between">
           <div>
@@ -72,11 +64,22 @@ const Chessboard = ({
           <Timer player={opponent} side="opponent" />
         </div>
       )}
-      <RChessboard
-        {...props}
-        customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
-        customLightSquareStyle={{ backgroundColor: "hsl(var(--secondary))" }}
-      />
+      <div className="w-full h-full relative">
+        {(info || disabled) && (
+          <div className="w-full h-full bg-foreground/30 absolute inset-0 flex items-center justify-center z-30">
+            {info && (
+              <div className="w-full py-5 text-center bg-background">
+                <p className="text-lg lg:text-xl font-medium">{info}</p>
+              </div>
+            )}
+          </div>
+        )}
+        <RChessboard
+          {...props}
+          customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
+          customLightSquareStyle={{ backgroundColor: "hsl(var(--secondary))" }}
+        />
+      </div>
       {player && (
         <div className="w-full flex items-center justify-between">
           <div>

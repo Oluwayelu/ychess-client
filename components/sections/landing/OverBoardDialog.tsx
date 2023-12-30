@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,13 +12,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useGame } from "@/lib/hooks";
-import { computer, timeControl } from "@/lib/CONSTANTS";
+import { timeControl } from "@/lib/CONSTANTS";
 import { TimeControl } from "@/lib/types";
-import { CHOOSE_COLOR, PLAY_COMPUTER } from "@/reducers/types";
+import { CHOOSE_COLOR, CHOOSE_TIME } from "@/reducers/types";
 
 export const OverBoardDialog = () => {
   const router = useRouter();
-  const { value, dispatch } = useGame();
+  const {  dispatch } = useGame();
   const [selectedTime, setTime] = useState<TimeControl>(timeControl[3]);
   const [selectedColor, setColor] = useState("random");
 
@@ -29,8 +28,14 @@ export const OverBoardDialog = () => {
       payload: selectedColor,
     });
 
+    dispatch({
+      type: CHOOSE_TIME,
+      payload: selectedTime,
+    });
+
     router.push("/play/over-board");
   };
+
   return (
     <Dialog>
       <DialogTrigger asChild>

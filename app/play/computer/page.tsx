@@ -114,8 +114,12 @@ const PlayStockfish = () => {
         payload: "You won on time",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.isGameOver()]);
+  }, [
+    dispatch,
+    game,
+    opponent.timeControl.time.secs,
+    player.timeControl.time.secs,
+  ]);
 
   // useEffect(() => {
   //   dispatch({

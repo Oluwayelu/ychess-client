@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 import { useGame } from "@/lib/hooks";
-import { CustomSquares, PlayerMove } from "@/lib/types";
+import { CustomSquares, PlayerMove, Side } from "@/lib/types";
 import { Chessboard } from "@/components/chessboard";
 import { GameDetails } from "@/components/game-details";
 
@@ -29,9 +29,17 @@ const PlayOverBoard = () => {
 
   const makeAMove = useCallback(
     (move: PlayerMove) => {
-      return playerMove({ game, move, dispatch, setCustomSquare });
+      let side: Side;
+
+      if (player.color === game.turn()) {
+        side = "player";
+      } else {
+        side = "opponent";
+      }
+
+      return playerMove({ game, move, side, dispatch, setCustomSquare });
     },
-    [game, dispatch]
+    [player.color, game, dispatch]
   );
 
   const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
@@ -118,8 +126,12 @@ const PlayOverBoard = () => {
         payload: "You won on time",
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.isGameOver()]);
+  }, [
+    dispatch,
+    game,
+    opponent.timeControl.time.secs,
+    player.timeControl.time.secs,
+  ]);
 
   return (
     <div className="max-w-6xl mx-auto w-full h-full flex flex-col lg:flex-row items-center gap-5">
