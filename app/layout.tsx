@@ -1,11 +1,14 @@
-import { Navbar } from "@/components/navbar";
-
 import { GameProvider } from "@/context";
+import { Navbar } from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "@/context/session";
+import { Boxes } from "@/components/ui/background-bokes";
+import { ThemeProvider } from "@/components/theme-provider";
+import { QueryProvider } from "@/components/query-provider";
 
 import type { Metadata } from "next";
 
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "YChess",
@@ -19,20 +22,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full bg-white">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <GameProvider>
-            <Navbar />
-            <div className="w-full min-h-[90vh] p-5 lg:pt-10">{children}</div>
-          </GameProvider>
-        </ThemeProvider>
-      </body>
+      <QueryProvider>
+        <body className="w-full">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionProvider>
+              <GameProvider>{children}</GameProvider>
+            </SessionProvider>
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </QueryProvider>
     </html>
   );
 }
-

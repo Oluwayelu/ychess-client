@@ -7,8 +7,8 @@ export const Logo = () => {
         <Image src="/images/rook_w.png" alt="logo" layout="fill" />
       </div>
       <h1 className="-ml-2 pb-1 text-3xl font-bold">
-        {/* <span className="text-blue-500">Y</span> */}
-        Castle
+        <span className="text-primary">Y</span>
+        <span className="text-secondary">Chess</span>
       </h1>
     </div>
   );

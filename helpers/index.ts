@@ -25,46 +25,59 @@ export const bestMove = ({
   dispatch: Dispatch<Actions>;
   setCustomSquare: Dispatch<SetStateAction<Partial<CustomSquares>>>;
 }) => {
-  engine.evaluatePosition(position, engineLevel);
-  engine.onMessage(({ bestMove }) => {
-    if (bestMove) {
-      const result = game.move(bestMove);
-
-      dispatch({
-        type: UPDATE_POSITION,
-      });
-
-      let kingSquare = undefined;
-      if (game.inCheck()) {
-        const kingPos = game.board().reduce((acc, row, index) => {
-          const squareIndex = row.findIndex(
-            (square) =>
-              square && square.type === "k" && square.color === game.turn()
-          );
-          return squareIndex >= 0
-            ? `${String.fromCharCode(squareIndex + 97)}${8 - index}`
-            : acc;
-        }, "");
-
-        kingSquare = {
-          [kingPos]: {
-            background:
-              "radial-gradient(red, rgba(255,0,0,.4), transparent 70%)",
-            borderRadius: "50%",
-          },
+  try {
+    engine.evaluatePosition(position, engineLevel);
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        const move = {
+          from: bestMove.slice(0, 2),
+          to: bestMove.slice(2, 4),
+          // promotion: "q",
         };
-      }
 
-      setCustomSquare({
-        lastMove: {
-          [result.from]: { background: "rgba(255, 255, 0, 0.4)" },
-          [result.to]: { background: "rgba(255, 255, 0, 0.4)" },
-        },
-        check: kingSquare,
-        options: {},
-      });
-    }
-  });
+        const result = game.move(move);
+
+        dispatch({
+          type: UPDATE_POSITION,
+        });
+
+        let kingSquare = undefined;
+        if (game.inCheck()) {
+          const kingPos = game.board().reduce((acc, row, index) => {
+            const squareIndex = row.findIndex(
+              (square) =>
+                square && square.type === "k" && square.color === game.turn()
+            );
+            return squareIndex >= 0
+              ? `${String.fromCharCode(squareIndex + 97)}${8 - index}`
+              : acc;
+          }, "");
+
+          kingSquare = {
+            [kingPos]: {
+              background:
+                "radial-gradient(red, rgba(255,0,0,.4), transparent 70%)",
+              borderRadius: "50%",
+            },
+          };
+        }
+
+        setCustomSquare({
+          lastMove: {
+            [result.from]: { background: "rgba(255, 255, 0, 0.4)" },
+            [result.to]: { background: "rgba(255, 255, 0, 0.4)" },
+          },
+          check: kingSquare,
+          options: {},
+        });
+
+        return result;
+      }
+    });
+  } catch (err) {
+    setCustomSquare({ options: {} });
+    return null;
+  }
 };
 
 export const playerMove = ({
@@ -82,6 +95,8 @@ export const playerMove = ({
 }) => {
   try {
     const result = game.move(move);
+
+    console.log("Player move: ", move);
     dispatch({
       type: UPDATE_POSITION,
     });

@@ -17,6 +17,8 @@ import {
   UPDATE_POSITION,
   UPDATE_RESULT,
   UPDATE_TIMER,
+  UPDATE_PLAYER,
+  CLEAR_GAME,
 } from "./types";
 
 export const initialState: GameType = {
@@ -31,13 +33,18 @@ export const initialState: GameType = {
   showLegal: true,
   showRecent: true,
   position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  timeControl: {
+    type: "Blitz",
+    name: "3+2",
+    time: { secs: 3 * 60, increment: 2 },
+  },
   player: {
     name: "Player 1",
     color: "w",
     timeControl: {
       type: "Blitz",
       name: "3+2",
-      time: { secs: 3 * 60, increment: 2 * 60 },
+      time: { secs: 3 * 60, increment: 2 },
     },
   },
   opponent: {
@@ -46,7 +53,7 @@ export const initialState: GameType = {
     timeControl: {
       type: "Blitz",
       name: "3+2",
-      time: { secs: 3 * 60, increment: 2 * 60 },
+      time: { secs: 3 * 60, increment: 2 },
     },
   },
 };
@@ -59,9 +66,16 @@ export const gameReducer = (
     case START_GAME:
       return { ...state };
 
+    case CLEAR_GAME:
+      return {...initialState}
+
     case RESTART:
       state.game.reset();
-      return initialState;
+      return {
+        ...initialState,
+        player: { ...state.player, timeControl: state.timeControl },
+        opponent: { ...state.opponent, timeControl: state.timeControl },
+      };
 
     case UNDO:
       state.game.undo();
@@ -103,6 +117,7 @@ export const gameReducer = (
           },
         },
       };
+
     case UPDATE_OTHER_PLAYER_TIME:
       return {
         ...state,
@@ -114,6 +129,9 @@ export const gameReducer = (
           },
         },
       };
+
+    case UPDATE_PLAYER:
+      return { ...state, player: { ...state.player, name: payload.username } };
 
     case ADD_INCREMENT_TO_PLAYER_TIME:
       return {
@@ -154,6 +172,7 @@ export const gameReducer = (
     case CHOOSE_TIME:
       return {
         ...state,
+        timeControl: payload,
         opponent: {
           ...state.opponent,
           timeControl: payload,
@@ -192,6 +211,7 @@ export const gameReducer = (
       return {
         ...state,
         position: state.game.fen(),
+        timeControl: payload.time,
         engineLevel: payload.computer.engineLevel,
         opponent: {
           ...state.opponent,

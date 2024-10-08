@@ -22,6 +22,7 @@ import { useGame } from "@/lib/hooks";
 import { Computer, TimeControl } from "@/lib/types";
 import { computer, timeControl } from "@/lib/CONSTANTS";
 import { CHOOSE_COLOR, PLAY_COMPUTER } from "@/reducers/types";
+import ShimmerButton from "@/components/ui/shimmer-button";
 
 export const ComputerDialog = () => {
   const router = useRouter();
@@ -50,11 +51,17 @@ export const ComputerDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="xl" variant="outline" className="w-full">
+        <ShimmerButton
+          background="#39FF14"
+          shimmerSize="0.2em"
+          shimmerDuration="4s"
+          borderRadius="10px"
+          className="h-16 shadow shadow-secondary"
+        >
           Play computer
-        </Button>
+        </ShimmerButton>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="text-white">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold">Play vs...</DialogTitle>
         </DialogHeader>
@@ -83,7 +90,7 @@ export const ComputerDialog = () => {
                     onClick={() => setComputer(player)}
                     className={`${
                       player.name === selectedComputer.name &&
-                      "border border-primary rounded-lg"
+                      "shadow shadow-secondary rounded-lg"
                     } w-full p-2 flex flex-col items-center cursor-pointer`}
                   >
                     <Image
@@ -99,7 +106,11 @@ export const ComputerDialog = () => {
                   </div>
                 ))}
               </div>
-              <Button size="lg" onClick={() => setNext(!next)}>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => setNext(!next)}
+              >
                 Choose player
               </Button>
             </div>
@@ -113,8 +124,8 @@ export const ComputerDialog = () => {
                     onClick={() => setTime(tControl)}
                     className={`${
                       selectedTime.name === tControl.name
-                        ? "border-primary"
-                        : "border-primary/30"
+                        ? "border-secondary"
+                        : "border-secondary/30"
                     } w-full p-2 flex flex-col items-center rounded-lg border cursor-pointer`}
                   >
                     <h4 className="md:text-lg">{tControl.name}</h4>
@@ -129,8 +140,8 @@ export const ComputerDialog = () => {
                   onClick={() => setColor("w")}
                   className={`${
                     selectedColor === "w"
-                      ? "border-primary"
-                      : "border-primary/30"
+                      ? "border-secondary"
+                      : "border-secondary/30"
                   } w-16 h-16 flex items-center justify-center rounded-lg border`}
                 >
                   <div className="relative w-3/4 h-3/4 ">
@@ -141,8 +152,8 @@ export const ComputerDialog = () => {
                   onClick={() => setColor("random")}
                   className={`${
                     selectedColor === "random"
-                      ? "border-primary"
-                      : "border-primary/30"
+                      ? "border-secondary"
+                      : "border-secondary/30"
                   } w-16 h-16 flex items-center justify-center rounded-lg border`}
                 >
                   <p className="text-2xl font-bold">?</p>
@@ -151,8 +162,8 @@ export const ComputerDialog = () => {
                   onClick={() => setColor("b")}
                   className={`${
                     selectedColor === "b"
-                      ? "border-primary"
-                      : "border-primary/30"
+                      ? "border-secondary"
+                      : "border-secondary/30"
                   } w-16 h-16 flex items-center justify-center rounded-lg border`}
                 >
                   <div className="relative w-3/4 h-3/4 ">
@@ -170,7 +181,7 @@ export const ComputerDialog = () => {
                 >
                   Go back
                 </Button>
-                <Button onClick={handlePlay} size="lg">
+                <Button variant="secondary" onClick={handlePlay} size="lg">
                   Play computer
                 </Button>
               </div>

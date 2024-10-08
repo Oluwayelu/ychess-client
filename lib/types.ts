@@ -1,6 +1,10 @@
 import Engine from "./engine";
 import { Chess, Color, Move } from "chess.js";
 
+export interface ResponseData {
+  message: string;
+}
+
 export type Actions = {
   type: string;
   payload?: any;
@@ -37,6 +41,7 @@ export type GameType = {
   autoQueen: boolean;
   showLegal: boolean;
   showRecent: boolean;
+  timeControl: TimeControl;
   player: Player;
   opponent: Player;
 };
@@ -74,4 +79,18 @@ export interface TimeControl {
 export interface Time {
   secs: number;
   increment: number;
+}
+
+export interface User {
+  email: string;
+  username: string;
+  name: {
+    firstname?: string;
+    lastname?: string;
+    fullname?: string;
+  };
+  password: string;
+  wins: number;
+  losses: number;
+  draws: number;
 }

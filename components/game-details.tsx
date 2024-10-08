@@ -24,6 +24,15 @@ import {
   UPDATE_POSITION,
   UPDATE_RESULT,
 } from "@/reducers/types";
+import {
+  Hand,
+  Flag,
+  CornerUpLeft,
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronRight,
+  ChevronsRight,
+} from "lucide-react";
 
 import type { Piece, Square } from "react-chessboard/dist/chessboard/types";
 
@@ -86,158 +95,160 @@ export const GameDetails = () => {
 
   // auto scroll for moves
   useEffect(() => {
-    const activeMoveEl = document.getElementById("activeNavMove");
-    const moveList = moveListRef.current;
-    if (!activeMoveEl || !moveList) return;
-    moveList.scrollTop = activeMoveEl.offsetTop;
-    // console.log("2nd: ", moveList);
-  });
-
-  // const sample = () => {
-  //   moves.map((move, i) => {
-  //     console.log(game.history({ verbose: true }));
-  //     console.log(moves, i);
-  //   });
-  // };
-
-  // sample()
+    // const activeMoveEl = document.getElementById("activeNavMove");
+    // const moveList = moveListRef.current;
+    // if (!activeMoveEl || !moveList) return;
+    // moveList.scrollTop = activeMoveEl.offsetTop;
+    if (moves.length) {
+      moveListRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [moves.length]);
 
   return (
-    <Card className="w-full lg:w-4/5 bg-secondary">
-      <CardHeader>
-        <CardTitle className="w-full inline-flex items-center gap-2">
-          <span>{player.timeControl.name}</span>
-          <div className="w-2 h-2 bg-primary rounded-full" />
-          <span>{player.timeControl.type}</span>
-        </CardTitle>
+    <div className="w-full h-full p-1 bg-background text-white space-y-3">
+      {/* header */}
+      <div className="p-5 flex items-center font-mono gap-2">
+        <h2 className="text-2xl font-medium">{player.timeControl.name}</h2>
+        <div className="w-2 h-2 bg-primary rounded-full" />
+        <span className="text-xl">{player.timeControl.type}</span>
+      </div>
 
-        <CardDescription className="flex flex-col gap-2">
-          <div className="inline-flex items-center gap-2">
-            <div
-              className={`${
-                opponent.color === "w" ? "bg-white" : "bg-black"
-              } w-4 h-4 border rounded-full`}
-            />
-            <p className="font-medium">{opponent.name}</p>
-          </div>
-          <div className="inline-flex items-center gap-2">
-            <div
-              className={`${
-                player.color === "w" ? "bg-white" : "bg-black"
-              } w-4 h-4 border rounded-full`}
-            />
-            <p className="font-medium">{player.name}</p>
-          </div>
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="px-0">
-        <div className="w-full p-3 bg-primary space-x-3">
-          <Button size="sm" onClick={undo}>
-            Undo
-          </Button>
-          <Button size="sm" onClick={restart}>
-            Restart
-          </Button>
-          <Button>1/2 Draw</Button>
-          <Button>Resign</Button>
+      <div className="w-full grid grid-cols-3 gap-1">
+        <div
+          onClick={undo}
+          className="w-full inline-flex justify-center items-center gap-1 py-3 hover:bg-secondary bg-[#2d2d2d] cursor-pointer"
+        >
+          <CornerUpLeft size={16} />
+          <span>Undo</span>
         </div>
-        <div className="w-full h-40 flex">
-          <ScrollArea ref={moveListRef} className="w-full h-full">
-            {moves &&
-              moves.map((move, i) => (
-                <div className="w-full lg:w-4/5 grid grid-cols-5" key={i}>
-                  <div className="w-full text-center font-bold p-2">
-                    {i + 1}.
-                  </div>
+        <div className="w-full inline-flex justify-center items-center gap-1 py-3 hover:bg-primary bg-[#2d2d2d] cursor-pointer">
+          {/* TODO: change to handshake */}
+          <Hand size={16} />
+          <span>Draw</span>
+        </div>
+        <div className="w-full inline-flex justify-center items-center gap-1 py-3 hover:bg-red-500 bg-[#2d2d2d] cursor-pointer">
+          <Flag size={16} />
+          <span>Resign</span>
+        </div>
+      </div>
+
+      <div className="w-full h-[164px] bg-[#2d2d2d] overflow-y-auto">
+        {moves && moves.length !== 0 ? (
+          moves.map((move, i) => {
+            console.log(
+              "Move: ",
+              navIndex,
+              move[0],
+              move[1],
+              game.history({ verbose: true }).indexOf(move[0])
+            );
+            return (
+              <div
+                key={i}
+                className="relative w-full h-10 grid grid-cols-6 gap-px"
+              >
+                {/* number */}
+                <div className="w-full h-full text-center p-2">{i + 1}</div>
+                {/* white move */}
+                <div
+                  onClick={() =>
+                    navigateMove(
+                      game.history({ verbose: true }).indexOf(move[0])
+                    )
+                  }
+                  className={`${
+                    (game.history({ verbose: true }).indexOf(move[0]) ===
+                      game.history({ verbose: true }).length - 1 &&
+                      navIndex === null) ||
+                    navIndex ===
+                      game.history({ verbose: true }).indexOf(move[0])
+                      ? "bg-primary text-white"
+                      : "bg-white text-background"
+                  } w-full h-full p-2 col-span-2 border-y border-y-[#2d2d2d]`}
+                >
+                  {move[0].san}
+                </div>
+
+                {/* black move */}
+                {move[1] && (
                   <div
-                    id={
-                      (game.history({ verbose: true }).indexOf(move[0]) ===
-                        game.history({ verbose: true }).length - 1 &&
-                        navIndex === null) ||
-                      navIndex ===
-                        game.history({ verbose: true }).indexOf(move[0])
-                        ? "activeNavMove"
-                        : ""
-                    }
+                    id={moves.length - 1 === i ? "activeNavMove" : ""}
                     onClick={() =>
                       navigateMove(
-                        game.history({ verbose: true }).indexOf(move[0])
+                        game.history({ verbose: true }).indexOf(move[1])
                       )
                     }
-                    // className="w-full bg-white p-2 col-span-2"
                     className={`${
-                      (game.history({ verbose: true }).indexOf(move[0]) ===
+                      (game.history({ verbose: true }).indexOf(move[1]) ===
                         game.history({ verbose: true }).length - 1 &&
                         navIndex === null) ||
                       navIndex ===
-                        game.history({ verbose: true }).indexOf(move[0])
+                        game.history({ verbose: true }).indexOf(move[1])
                         ? "bg-primary text-white"
-                        : "bg-white text-primary"
-                    } w-full p-2 col-span-2`}
+                        : "bg-white text-background"
+                    } w-full h-full p-2 col-span-2 border-y border-y-[#2d2d2d]`}
                   >
-                    {move[0].san}
+                    {move[1].san}
                   </div>
-                  {move[1] && (
-                    <div
-                      id={moves.length - 1 === i ? "activeNavMove" : ""}
-                      onClick={() =>
-                        navigateMove(
-                          game.history({ verbose: true }).indexOf(move[1])
-                        )
-                      }
-                      // className="w-full bg-white p-2 col-span-2"
-                      className={`${
-                        (game.history({ verbose: true }).indexOf(move[1]) ===
-                          game.history({ verbose: true }).length - 1 &&
-                          navIndex === null) ||
-                        navIndex ===
-                          game.history({ verbose: true }).indexOf(move[1])
-                          ? "bg-primary text-white"
-                          : "bg-white text-primary"
-                      } w-full  p-2 col-span-2`}
-                    >
-                      {move[1].san}
-                    </div>
-                  )}
-                </div>
-              ))}
-          </ScrollArea>
+                )}
+                <div ref={moveListRef} />
+              </div>
+            );
+          })
+        ) : (
+          <div className="w-full h-full flex justify-center items-center row-span-5">
+            No moves found
+          </div>
+        )}
+      </div>
+      <div className="w-full flex items-center justify-end gap-1">
+        <div
+          onClick={() => navigateMove(0)}
+          className="w-10 h-10 flex justify-center items-center rounded bg-[#2d2d2d] cursor-pointer"
+        >
+          <ChevronsLeft />
         </div>
-        <div className="w-full flex items-center p-3 bg-primary">
-          <div className="w-2/3 flex items-center gap-2"></div>
-          <div className="w-1/3 grid grid-cols-4 ">
-            <div
-              onClick={() => navigateMove(0)}
-              className="w-full inline-flex justify-center text-white bg-primary hover:bg-primary/60 cursor-pointer"
-            >
-              {`<<`}
+        <div
+          onClick={() =>
+            navigateMove(navIndex === null ? "prev" : navIndex - 1)
+          }
+          className="w-10 h-10 flex justify-center items-center rounded bg-[#2d2d2d] cursor-pointer"
+        >
+          <ChevronLeft />
+        </div>
+        <div
+          onClick={() => navigateMove(navIndex === null ? null : navIndex + 1)}
+          className="w-10 h-10 flex justify-center items-center rounded bg-[#2d2d2d] cursor-pointer"
+        >
+          <ChevronRight />
+        </div>
+        <div
+          onClick={() => navigateMove(null)}
+          className="w-10 h-10 flex justify-center items-center rounded bg-[#2d2d2d] cursor-pointer"
+        >
+          <ChevronsRight />
+        </div>
+      </div>
+
+      <div className="w-full h-[40dvh] p-2 bg-[#2d2d2d] overflow-y-auto">
+        <h2 className="text-lg font-semibold">Chats</h2>
+        <div className="text-sm py-3">
+          <div className="w-full flex justify-end">
+            <div className="w-fit px-2 py-1 bg-secondary text-background font-medium rounded-lg">
+              Hello
             </div>
-            <div
-              onClick={() =>
-                navigateMove(navIndex === null ? "prev" : navIndex - 1)
-              }
-              className="w-full inline-flex justify-center text-white bg-primary hover:bg-primary/60 cursor-pointer"
-            >
-              {`<`}
-            </div>
-            <div
-              onClick={() =>
-                navigateMove(navIndex === null ? null : navIndex + 1)
-              }
-              className="w-full inline-flex justify-center text-white bg-primary hover:bg-primary/60 cursor-pointer"
-            >
-              {`>`}
-            </div>
-            <div
-              onClick={() => navigateMove(null)}
-              className="w-full inline-flex justify-center text-white bg-primary hover:bg-primary/60 cursor-pointer"
-            >
-              {`>>`}
+          </div>
+
+          <div className="w-full flex justify-start">
+            <div className="w-fit px-2 py-1 bg-white text-background font-medium rounded-lg">
+              Hello there
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

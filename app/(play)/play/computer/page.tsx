@@ -7,11 +7,12 @@ import { CustomSquares, PlayerMove } from "@/lib/types";
 import { Chessboard } from "@/components/chessboard";
 import { GameDetails } from "@/components/game-details";
 
-import { UPDATE_RESULT } from "@/reducers/types";
+import { CLEAR_GAME, UPDATE_RESULT } from "@/reducers/types";
 
 import type { Piece, Square } from "react-chessboard/dist/chessboard/types";
 import { getMoveOptions, playerMove } from "@/helpers";
 import { useComputer } from "@/lib/hooks/use-computer";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 const PlayStockfish = () => {
   const {
@@ -114,6 +115,11 @@ const PlayStockfish = () => {
         payload: "You won on time",
       });
     }
+
+    () => {
+      console.log("Unmounting ");
+      return dispatch({ type: CLEAR_GAME });
+    };
   }, [
     dispatch,
     game,
@@ -143,29 +149,37 @@ const PlayStockfish = () => {
   // }, [findBestMove, game.turn(), player.color]);
 
   return (
-    <div className="max-w-6xl mx-auto w-full h-full flex flex-col lg:flex-row items-center gap-5">
-      <div className="w-full lg:w-1/2 inline-flex justify-center">
-        <Chessboard
-          size="lg"
-          info={result}
-          player={player}
-          opponent={opponent}
-          position={position}
-          onPieceDrop={onDrop}
-          onSquareClick={onSquareClick}
-          onPieceDragEnd={onPieceDragEnd}
-          arePremovesAllowed={true}
-          onPieceDragBegin={onPieceDragBegin}
-          customSquareStyles={{
-            ...customSquare.check,
-            ...customSquare.options,
-            ...customSquare.lastMove,
-          }}
-          boardOrientation={player.color === "w" ? "white" : "black"}
-        />
+    <div className="w-full h-full flex flex-col lg:flex-row items-center gap-5">
+      <div className="w-full lg:w-3/4 h-full p-5 inline-flex justify-between gap-5">
+        <div className="w-[60%] h-full flex items-center">
+          <Chessboard
+            size="lg"
+            info={result}
+            player={player}
+            opponent={opponent}
+            position={position}
+            onPieceDrop={onDrop}
+            onSquareClick={onSquareClick}
+            onPieceDragEnd={onPieceDragEnd}
+            arePremovesAllowed={true}
+            onPieceDragBegin={onPieceDragBegin}
+            customSquareStyles={{
+              ...customSquare.check,
+              ...customSquare.options,
+              ...customSquare.lastMove,
+            }}
+            className="text-white"
+            boardOrientation={player.color === "w" ? "white" : "black"}
+          />
+        </div>
+
+        <div className="w-[40%] h-full flex flex-col justify-between text-white">
+          <div className="bg-white w-full h-[40dvh] rounded-md" />
+          <div className="bg-white w-full h-[40dvh] rounded-md" />
+        </div>
       </div>
 
-      <div className="w-full lg:w-1/2 h-full inline-flex justify-center items-center">
+      <div className="w-full lg:w-1/4 h-full inline-flex justify-end">
         <GameDetails />
       </div>
     </div>

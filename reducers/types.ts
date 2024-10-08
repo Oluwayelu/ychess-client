@@ -11,7 +11,10 @@ export const CHOOSE_TIME = "CH0OSE_TIME";
 export const CHOOSE_COLOR = "CHOOSE_COLOR";
 
 export const START_GAME = "START_GAME";
+export const CLEAR_GAME = "CLEAR_GAME";
 export const RESTART = "RESTART";
 export const UNDO = "UNDO";
 
 export const PLAY_COMPUTER = "PLAY_COMPUTER";
+
+export const UPDATE_PLAYER = "UPDATE_PLAYER";

@@ -47,7 +47,7 @@ const AnalysisBoard = () => {
 
       positionEvaluation &&
         setPositionEvaluation(
-          (game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)
+          ((game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)) / 100
         );
 
       possibleMate && setPossibleMate(possibleMate);
