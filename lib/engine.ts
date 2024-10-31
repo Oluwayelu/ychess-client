@@ -36,7 +36,7 @@ export default class Engine {
     this.isReady = false;
     this.onMessage = (callback) => {
       this.stockfish.addEventListener("message", (e) => {
-        console.log("Engine Message: ", this.transformSFMessageData(e));
+        // console.log("Engine Message: ", this.transformSFMessageData(e));
         callback(this.transformSFMessageData(e));
       });
     };

@@ -7,6 +7,7 @@ console.log("APIURL: ", process.env.NEXT_APP_API_URL);
 const useAxios = () => {
   const axiosInstance = axios.create({
     baseURL: API_URL,
+    withCredentials: true,
   });
 
   return axiosInstance;

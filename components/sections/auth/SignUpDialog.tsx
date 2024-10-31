@@ -14,6 +14,7 @@ import { Logo } from "@/components/logo";
 
 const SignUpDialog = () => {
   const { toast } = useToast();
+  // const {} = useReact
   const [details, setDetails] = useState({
     email: "",
     password: "",

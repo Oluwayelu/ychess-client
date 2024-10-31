@@ -51,7 +51,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@types/chess.js": "^0.13.5",
+    "@types/chess.js": "^0.13.7",
     "@types/lodash": "^4.14.202",
     "@types/node": "latest",
     "@types/react": "latest",

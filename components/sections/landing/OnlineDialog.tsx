@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui";
 import {
   Dialog,
   DialogContent,
@@ -10,15 +11,118 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { computer, timeControl } from "@/lib/CONSTANTS";
-import { useState } from "react";
-import { TimeControl } from "@/lib/types";
+import { Button } from "@/components/ui";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import ShimmerButton from "@/components/ui/shimmer-button";
+import { useReactMutation } from "@/lib/hooks/useReactQueryFn";
+
+import { TimeControl } from "@/lib/types";
+import { timeControl } from "@/lib/CONSTANTS";
+import Spinner from "@/components/ui/spinner";
 
 export const OnlineDialog = () => {
+  const router = useRouter();
+  const { toast } = useToast();
   const [type, setType] = useState<"create" | "join" | null>(null);
   const [selectedTime, setTime] = useState<TimeControl>(timeControl[3]);
   const [selectedColor, setColor] = useState("random");
+  const [isRedirecting, setRedirecting] = useState(false);
+  const [code, setCode] = useState<string | null>(null);
+
+  const { mutate, isPending } = useReactMutation("/game/create", "post");
+  const { mutate: getActiveGame, isPending: getActiveIsPending } =
+    useReactMutation(`/game/${code}`, "get");
+
+  const onCreatGame = () => {
+    try {
+      const details = {
+        timeControl: selectedTime,
+        side: selectedColor,
+      };
+
+      mutate(details, {
+        onSuccess: ({ data }) => {
+          console.log("Creat: ", data);
+          toast({
+            title: "Success",
+            variant: "success",
+            description: data.message,
+          });
+          setRedirecting(true);
+          router.push(`/play/${data.data.code}`);
+        },
+        onError: (error) => {
+          console.error(error);
+          toast({
+            title: "Error",
+            variant: "destructive",
+            description: error.message,
+          });
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "An error occured creating game",
+      });
+    } finally {
+      setRedirecting(false);
+    }
+  };
+
+  const onJoinGame = () => {
+    try {
+      if (code === null) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Code field cannot be empty",
+        });
+        return;
+      }
+
+      if (code.length !== 6) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Code is not a valid",
+        });
+        return;
+      }
+      getActiveGame(
+        {},
+        {
+          onSuccess: ({ data }) => {
+            console.log("Join: ", data);
+            toast({
+              title: "Success",
+              variant: "success",
+              description: data.message,
+            });
+            //  router.push(`/play/${data.data.code}`);
+          },
+          onError: (error) => {
+            console.error(error);
+            toast({
+              title: "Error",
+              variant: "destructive",
+              description: error.response?.data.message || error.message,
+            });
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "An error occured creating game",
+      });
+    }
+  };
 
   return (
     <Dialog>
@@ -33,7 +137,7 @@ export const OnlineDialog = () => {
           Play online
         </ShimmerButton>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] text-white">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold">Play Online</DialogTitle>
         </DialogHeader>
@@ -61,7 +165,7 @@ export const OnlineDialog = () => {
 
         {type === "create" && (
           <div className="w-full grid gap-2 md:gap-4">
-            <h2 className="text-2xl font-bold">Select time control</h2>
+            <h2 className="text-xl font-medium">Select time control</h2>
             <div className="w-full grid grid-cols-3 gap-1 md:gap-3">
               {timeControl.map((tControl, key) => (
                 <div
@@ -120,8 +224,46 @@ export const OnlineDialog = () => {
               >
                 Go back
               </Button>
-              <Button size="lg">Create game</Button>
+
+              <Button loading={isPending} onClick={onCreatGame} size="lg">
+                Create game
+              </Button>
             </div>
+          </div>
+        )}
+
+        {type === "join" && (
+          <div className="w-full grid gap-2 md:gap-4">
+            <h2 className="text-xl font-medium">Enter game code</h2>
+
+            <Input
+              className="w-full"
+              onChange={(e) => setCode(e.target.value)}
+            />
+            <div className="w-full flex justify-between items-center">
+              <Button
+                onClick={() => setType(null)}
+                size="lg"
+                variant="destructive"
+              >
+                Go back
+              </Button>
+
+              <Button
+                loading={getActiveIsPending}
+                onClick={onJoinGame}
+                size="lg"
+              >
+                Join game
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {isRedirecting && (
+          <div className="absolute inset-0 bg-background flex flex-col items-center justify-center">
+            <Spinner />
+            <h3>Redirecting to game...</h3>
           </div>
         )}
       </DialogContent>

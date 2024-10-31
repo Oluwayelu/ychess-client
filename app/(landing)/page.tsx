@@ -14,7 +14,7 @@ import AutoPlayChessboard from "@/components/sections/landing/AutoPlayChessboard
 
 export default function Home() {
   return (
-    <MaxWidthWrapper className="w-full h-full flex flex-col-reverse md:flex-row justify-center items-center">
+    <MaxWidthWrapper className="w-full h-full flex flex-col-reverse md:flex-row justify-center items-center gap-5 md:gap-10">
       <div className="w-full lg:w-1/2 h-full inline-flex justify-center items-center">
         <AutoPlayChessboard />
       </div>
@@ -46,5 +46,4 @@ export default function Home() {
     </MaxWidthWrapper>
   );
 }
-
 

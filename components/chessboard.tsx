@@ -57,25 +57,7 @@ const Chessboard = ({
 }: ChessboardProps) => {
   return (
     <div className={cn(chessboardVariants({ size, className }))}>
-      {opponent && (
-        <div className="w-full flex justify-between">
-          <div className="w-full h-12 flex gap-1">
-            <div className="w-10 h-10 rounded-md bg-white" />
-            <div className="h-full flex flex-col">
-              <p className="lg:text-lg font-bold">{opponent.name}</p>
-              <div>
-                <Image
-                  src="/images/pawn_w.png"
-                  alt="pawn"
-                  width={16}
-                  height={16}
-                />
-              </div>
-            </div>
-          </div>
-          <Timer player={opponent} side="opponent" />
-        </div>
-      )}
+      {opponent && <PlayerSide player={opponent} />}
       <div className="w-full h-full relative">
         {(info || disabled) && (
           <div className="w-full h-full absolute inset-0 flex items-center justify-center z-30">
@@ -96,15 +78,31 @@ const Chessboard = ({
           customLightSquareStyle={{ backgroundColor: " #5A5A5A" }}
         />
       </div>
-      {player && (
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-start gap-1">
-            <div className="w-10 h-10 rounded-md bg-white" />
-            <p className="lg:text-lg font-bold">{player.name}</p>
-          </div>
-          <Timer player={player} side="player" />
+      {player && <PlayerSide player={player} />}
+    </div>
+  );
+};
+
+const PlayerSide = ({ player }: { player: Player }) => {
+  return (
+    <div className="w-full flex justify-between">
+      <div className="w-full h-12 flex gap-1">
+        <div className="w-10 h-10 flex items-center justify-center rounded-md bg-white">
+          <Image
+            src={player.avatar || `/images/pawn_${player.color}.png`}
+            alt="pawn"
+            width={30}
+            height={30}
+          />
         </div>
-      )}
+        <div className="h-full flex flex-col">
+          <p className="lg:text-lg font-bold capitalize">{player.name}</p>
+          <div>
+            <Image src="/images/pawn_w.png" alt="pawn" width={16} height={16} />
+          </div>
+        </div>
+      </div>
+      <Timer player={player} side="opponent" />
     </div>
   );
 };

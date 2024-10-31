@@ -30,9 +30,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SessionProvider>
-              <GameProvider>{children}</GameProvider>
-            </SessionProvider>
+            <GameProvider>
+              <SessionProvider>{children}</SessionProvider>
+            </GameProvider>
           </ThemeProvider>
           <Toaster />
         </body>

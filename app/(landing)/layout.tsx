@@ -14,17 +14,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="w-full">
-        <Navbar />
-        <div className="min-h-[90vh] relative w-full overflow-hidden bg-transparent flex flex-col items-center justify-center">
-          <div className="absolute inset-0 w-full h-full bg-transparent z-20  pointer-events-none" />
-          <Boxes />
+    <div className="w-full">
+      <Navbar />
+      <div className="min-h-[90vh] relative w-full overflow-hidden bg-transparent flex flex-col items-center justify-center">
+        <div className="absolute inset-0 w-full h-full bg-transparent z-20  pointer-events-none" />
+        <Boxes />
 
-          {children}
-        </div>
-      </body>
-    </html>
+        {children}
+      </div>
+    </div>
   );
 }
 

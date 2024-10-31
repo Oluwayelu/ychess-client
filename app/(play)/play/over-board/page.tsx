@@ -134,31 +134,33 @@ const PlayOverBoard = () => {
   ]);
 
   return (
-    <div className="max-w-6xl mx-auto w-full h-full flex flex-col lg:flex-row items-center gap-5">
-      <div className="w-full lg:w-1/2 inline-flex justify-center">
-        <Chessboard
-          size="lg"
-          info={result}
-          player={player}
-          opponent={opponent}
-          position={position}
-          onPieceDrop={onDrop}
-          onSquareClick={onSquareClick}
-          onPieceDragEnd={onPieceDragEnd}
-          arePremovesAllowed={true}
-          onPieceDragBegin={onPieceDragBegin}
-          customSquareStyles={{
-            ...customSquare.check,
-            ...customSquare.options,
-            ...customSquare.lastMove,
-          }}
-          boardOrientation={player.color === "w" ? "white" : "black"}
-        />
+    <div className="w-full h-full flex flex-col lg:flex-row items-center gap-5">
+      <div className="w-full lg:w-3/4 h-full p-5 inline-flex justify-between gap-5">
+        <div className="w-[60%] h-full flex items-center">
+          <Chessboard
+            size="lg"
+            info={result}
+            player={player}
+            opponent={opponent}
+            position={position}
+            onPieceDrop={onDrop}
+            onSquareClick={onSquareClick}
+            onPieceDragEnd={onPieceDragEnd}
+            arePremovesAllowed={true}
+            onPieceDragBegin={onPieceDragBegin}
+            customSquareStyles={{
+              ...customSquare.check,
+              ...customSquare.options,
+              ...customSquare.lastMove,
+            }}
+            boardOrientation={player.color === "w" ? "white" : "black"}
+          />
+        </div>
       </div>
 
-      <div className="w-full lg:w-1/2 h-full inline-flex justify-center items-center">
+      {/* <div className="w-full lg:w-1/4 h-full inline-flex justify-end">
         <GameDetails />
-      </div>
+      </div> */}
     </div>
   );
 };

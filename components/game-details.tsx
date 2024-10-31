@@ -138,13 +138,6 @@ export const GameDetails = () => {
       <div className="w-full h-[164px] bg-[#2d2d2d] overflow-y-auto">
         {moves && moves.length !== 0 ? (
           moves.map((move, i) => {
-            console.log(
-              "Move: ",
-              navIndex,
-              move[0],
-              move[1],
-              game.history({ verbose: true }).indexOf(move[0])
-            );
             return (
               <div
                 key={i}

@@ -67,7 +67,7 @@ export const gameReducer = (
       return { ...state };
 
     case CLEAR_GAME:
-      return {...initialState}
+      return { ...initialState };
 
     case RESTART:
       state.game.reset();

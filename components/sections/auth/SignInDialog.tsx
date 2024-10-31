@@ -29,6 +29,7 @@ const schema = yup.object({
 const SignInDialog = () => {
   const { toast } = useToast();
   const { dispatch } = useGame();
+  const { setUser } = useSession();
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useLocalStorage<User | null>("user", null);
 
@@ -50,29 +51,6 @@ const SignInDialog = () => {
   });
 
   const onSubmit = (details: { user: string; password: string }) => {
-    // setLoading(true);
-    // login(details)
-    //   .then((res) => {
-    //     setValue(res.data);
-    //     setLoading(false);
-    // dispatch({
-    //   type: UPDATE_PLAYER,
-    //   payload: res.data,
-    // });
-    // toast({
-    //   variant: "success",
-    //   title: "Success",
-    //   description: res.message,
-    // });
-    //   })
-    //   .catch((err) => {
-    //     setLoading(false);
-    //     toast({
-    //       title: "Error",
-    //       description: err.message,
-    //     });
-    //   });
-
     mutate(details, {
       onSuccess: ({ data }) => {
         console.log(data);
@@ -85,6 +63,7 @@ const SignInDialog = () => {
           title: "Success",
           description: data.message,
         });
+        setUser(data.data);
       },
       onError: (error) => {
         console.log(error);
