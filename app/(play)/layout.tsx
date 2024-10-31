@@ -7,7 +7,7 @@ import { Logo } from "@/components/logo";
 import { LogoIcon } from "@/components/logo-icon";
 import { HomeIcon } from "lucide-react";
 
-export const sidebarLinks = [
+const sidebarLinks = [
   {
     label: "Home",
     href: "/",
