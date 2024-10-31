@@ -1,4 +1,4 @@
-import type { Move, ShortMove } from "chess.js";
+import type { Move } from "chess.js";
 import clamp from "lodash/clamp";
 import { useCallback, useEffect, useState } from "react";
 
@@ -29,6 +29,13 @@ export enum ChessEngineStatus {
  * Latest chess move found by the chess engine.
  * `null` means the engine has not been running.
  */
+
+type ShortMove = {
+  from: any;
+  to: any;
+  promotion: any;
+};
+
 export type ChessEngineMove = ShortMove | null;
 
 /** Configurable options for `useStockfish` hook. */
